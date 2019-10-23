@@ -149,6 +149,7 @@ in buildFHSUserEnv rec {
     SDL
     SDL2_image
     glew110
+    glew
     openssl
     libidn
     tbb
