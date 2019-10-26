@@ -36,7 +36,7 @@ stdenv.mkDerivation rec {
     comment = "Ambitious dungeon builder with roguelike elements";
     type = "Application";
     categories = "Game";
-    exec = "keeperrl";
+    exec = "keeper";
   };
 
   installPhase = ''
