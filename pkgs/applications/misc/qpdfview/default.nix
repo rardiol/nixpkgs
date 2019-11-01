@@ -23,12 +23,11 @@ mkDerivation {
     inherit (s) url sha256;
   };
 
-# preConfigure = ''
-#   export qmakeFlags="$qmakeFlags $(echo *.pro)"
-# '';
+  preConfigure = ''
+    qmakeFlags+=(*.pro)
+  '';
 
   qmakeFlags = [
-    "application.pro" "djvu-plugin.pro" "fitz-plugin.pro" "image-plugin.pro" "pdf-plugin.pro" "ps-plugin.pro" "qpdfview.pro"
     "TARGET_INSTALL_PATH=${placeholder "out"}/bin"
     "PLUGIN_INSTALL_PATH=${placeholder "out"}/lib/qpdfview"
     "DATA_INSTALL_PATH=${placeholder "out"}/share/qpdfview"

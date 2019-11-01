@@ -10,16 +10,16 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "jormungandr";
-  version = "0.6.5";
+  version = "0.7.0-rc3";
 
   src = fetchgit {
     url = "https://github.com/input-output-hk/${pname}";
     rev = "v${version}";
-    sha256 = "16s6ks63194w35xlgzbhjdb3h606hkj049bap52sd6qf637bw2p7";
+    sha256 = "09hfmzgz1imz22w27c0aal6v7m4yfivh0sk63mawcd4m7sa6045c";
     fetchSubmodules = true;
   };
 
-  cargoSha256 = "1kba65rnm2vyqsjhcnfwy1m44x1w3xxlzinykmb89jy6qr8gvp42";
+  cargoSha256 = "0syfwykwzfm9nqpna0qrmjiv4dp0rxxbpxv8qawq9ivs9z8fbq2m";
 
   nativeBuildInputs = [ pkgconfig protobuf ];
   buildInputs = [ openssl ] ++ lib.optionals stdenv.isDarwin [ darwin.apple_sdk.frameworks.Security ];
