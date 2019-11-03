@@ -95,6 +95,7 @@ in buildFHSUserEnv rec {
     gdk_pixbuf
     pango
     fontconfig
+    qt5.qtbase
   ] ++ (if (!nativeOnly) then [
     (steamPackages.steam-runtime-wrapped.override {
       inherit runtimeOnly;
