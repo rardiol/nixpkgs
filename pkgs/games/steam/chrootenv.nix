@@ -96,6 +96,7 @@ in buildFHSUserEnv rec {
     pango
     fontconfig
     qt5.qtbase
+    libmad
   ] ++ (if (!nativeOnly) then [
     (steamPackages.steam-runtime-wrapped.override {
       inherit runtimeOnly;
