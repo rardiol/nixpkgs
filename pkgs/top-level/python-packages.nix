@@ -4273,6 +4273,8 @@ in {
 
   pexpect = callPackage ../development/python-modules/pexpect { };
 
+  pexpect_4_6 = callPackage ../development/python-modules/pexpect/4_6.nix { };
+
   pdfkit = callPackage ../development/python-modules/pdfkit { };
 
   periodictable = callPackage ../development/python-modules/periodictable { };

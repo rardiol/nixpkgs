@@ -13,7 +13,7 @@ stdenv.mkDerivation rec {
 
   makeFlags = [ "PREFIX=" "DESTDIR=$(out)" ];
 
-  checkInputs = [ (python2.withPackages (p: [ p.pexpect ])) ];
+  checkInputs = [ (python2.withPackages (p: [ p.pexpect_4_6 ])) ];
   doCheck = true;
 
   meta = {
