@@ -5,6 +5,7 @@
 , pytest
 , pytz
 , sqlalchemy
+, importlib-metadata
 }:
 
 buildPythonPackage rec {
@@ -23,7 +24,7 @@ buildPythonPackage rec {
       --replace "amqp==2.5.1" "amqp~=2.5"
   '';
 
-  propagatedBuildInputs = [ amqp ];
+  propagatedBuildInputs = [ amqp importlib-metadata ];
 
   checkInputs = [ pytest case pytz Pyro4 sqlalchemy ];
   # test_redis requires fakeredis, which isn't trivial to package
