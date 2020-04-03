@@ -53,7 +53,7 @@ let
       echo "$runtime_paths"
       exit 0
     fi
-    export LD_LIBRARY_PATH="$runtime_paths:$LD_LIBRARY_PATH"
+    export LD_LIBRARY_PATH="$runtime_paths''${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH"
     exec "$@"
   '';
 
@@ -76,28 +76,44 @@ in buildFHSUserEnv rec {
     xorg.libXfixes
     libGL
     pkgsi686Linux.libva
+    libva
 
     # Not formally in runtime but needed by some games
     at-spi2-atk
+    at-spi2-core   # CrossCode
     gst_all_1.gstreamer
     gst_all_1.gst-plugins-ugly
     libdrm
     mono
     xorg.xkeyboardconfig
     xorg.libpciaccess
+    udev # shadow of the tomb raider
+
     ## screeps dependencies
-    gnome3.gtk
+    gtk3
     dbus
     zlib
     glib
     atk
     cairo
     freetype
-    gdk_pixbuf
+    gdk-pixbuf
     pango
     fontconfig
     qt5.qtbase
     libmad
+
+    # friends options won't display "Launch Game" without it
+    lsof
+
+    # called by steam's setup.sh
+    file
+
+    # Prison Architect
+    libGLU
+    libuuid
+    libbsd
+    alsaLib
   ] ++ (if (!nativeOnly) then [
     (steamPackages.steam-runtime-wrapped.override {
       inherit runtimeOnly;
@@ -145,8 +161,6 @@ in buildFHSUserEnv rec {
     xorg.libXt
     xorg.libXmu
     xorg.libxcb
-    libGLU
-    libuuid
     libogg
     libvorbis
     SDL
@@ -262,7 +276,7 @@ in buildFHSUserEnv rec {
         exit 1
       fi
       shift
-      ${lib.optionalString (!nativeOnly) "export LD_LIBRARY_PATH=/lib32:/lib64:${lib.concatStringsSep ":" ldPath}:$LD_LIBRARY_PATH"}
+      ${lib.optionalString (!nativeOnly) "export LD_LIBRARY_PATH=/lib32:/lib64:${lib.concatStringsSep ":" ldPath}\${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH"}
       exec -- "$run" "$@"
     '';
   };

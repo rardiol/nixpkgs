@@ -24,7 +24,7 @@
 
 buildGoPackage rec {
   pname = "dde-api";
-  version = "3.18.4.1";
+  version = "5.0.0";
 
   goPackagePath = "pkg.deepin.io/dde/api";
 
@@ -32,7 +32,7 @@ buildGoPackage rec {
     owner = "linuxdeepin";
     repo = pname;
     rev = version;
-    sha256 = "0bcjp5ijwa4wmx6p43lik6vjlb7d5rk7nf8xl495i3yk9x70wyfa";
+    sha256 = "0iv4krj6dqdknwvmax7aj40k1h96259kqcfnljadrwpl7cvsvp5p";
   };
 
   goDeps = ./deps.nix;
@@ -43,28 +43,31 @@ buildGoPackage rec {
     pkgconfig
     deepin-gettext-tools # build
     dbus-factory         # build
-    go-dbus-factory      # needed
-    go-gir-generator     # needed
-    go-lib               # build
     deepin.setupHook
-  ];
 
-  buildInputs = [
-    alsaLib     # needed
+    # TODO: using $PATH to find run time executable does not work with cross compiling
     bc          # run (to adjust grub theme?)
     blur-effect # run (is it really needed?)
     coreutils   # run (is it really needed?)
     fontconfig  # run (is it really needed?)
-    #glib        # ? arch
+    rfkill      # run
+    xcur2png    # run
     grub2       # run (is it really needed?)
+  ];
+
+  buildInputs = [
+    go-dbus-factory      # needed
+    go-gir-generator     # needed
+    go-lib               # build
+
+    alsaLib     # needed
+    #glib        # ? arch
     gtk3        # build run
     libcanberra # build run
     libgudev    # needed
     librsvg     # build run
     poppler     # build run
     pulseaudio  # needed
-    rfkill      # run
-    xcur2png    # run
     #locales     # run (locale-helper needs locale-gen, which is unavailable on NixOS?)
   ];
 
@@ -113,7 +116,7 @@ buildGoPackage rec {
     searchHardCodedPaths $out  # debugging
   '';
 
-  passthru.updateScript = deepin.updateScript { inherit ;name = "${pname}-${version}"; };
+  passthru.updateScript = deepin.updateScript { name = "${pname}-${version}"; };
 
   meta = with stdenv.lib; {
     description = "Go-lang bindings for dde-daemon";

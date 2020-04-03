@@ -4,35 +4,30 @@
 , fetchPypi
 , pythonOlder
 , pytest
-, cython
-, cymem
-, darwin
-, msgpack-numpy
-, msgpack
-, preshed
-, numpy
-, murmurhash
-, pathlib
-, hypothesis
-, tqdm
-, cytoolz
-, plac
-, six
-, mock
-, wrapt
-, dill
 , blis
+, catalogue
+, cymem
+, cython
+, darwin
+, hypothesis
+, mock
+, murmurhash
+, numpy
+, pathlib
+, plac
+, preshed
 , srsly
+, tqdm
 , wasabi
 }:
 
 buildPythonPackage rec {
   pname = "thinc";
-  version = "7.2.0";
+  version = "7.4.0";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "808caccafab95aa74c21695248b26279792cd7d07d94fd97f181020f318f024a";
+    sha256 = "1f2qpjb8nfdklqp3vf6m36bklydlnr8y8v207p8d2gmapzhrngjj";
   };
 
   buildInputs = lib.optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
@@ -41,20 +36,15 @@ buildPythonPackage rec {
 
   propagatedBuildInputs = [
    blis
-   cython
+   catalogue
    cymem
-   msgpack-numpy
-   msgpack
-   preshed
-   numpy
+   cython
    murmurhash
-   tqdm
-   cytoolz
+   numpy
    plac
-   six
+   preshed
    srsly
-   wrapt
-   dill
+   tqdm
    wasabi
   ] ++ lib.optional (pythonOlder "3.4") pathlib;
 
@@ -64,11 +54,6 @@ buildPythonPackage rec {
     mock
     pytest
   ];
-
-  prePatch = ''
-    substituteInPlace setup.py \
-      --replace "plac>=0.9.6,<1.0.0" "plac>=0.9.6"
-  '';
 
   # Cannot find cython modules.
   doCheck = false;

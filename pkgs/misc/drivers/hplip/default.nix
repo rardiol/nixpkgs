@@ -1,8 +1,8 @@
 { stdenv, fetchurl, substituteAll
 , pkgconfig
-, cups, zlib, libjpeg, libusb1, pythonPackages, sane-backends
+, cups, zlib, libjpeg, libusb1, python3Packages, sane-backends
 , dbus, file, ghostscript, usbutils
-, net_snmp, openssl, perl, nettools
+, net-snmp, openssl, perl, nettools
 , bash, coreutils, utillinux
 , withQt5 ? true
 , withPlugin ? false
@@ -12,16 +12,16 @@
 let
 
   name = "hplip-${version}";
-  version = "3.19.6";
+  version = "3.20.3";
 
   src = fetchurl {
     url = "mirror://sourceforge/hplip/${name}.tar.gz";
-    sha256 = "0vfnc6pg7wzs68qn5mlk3cyl969d8n55bydgydq2wzfikvpfvnpw";
+    sha256 = "0sh6cg7yjc11x1cm4477iaslj9n8ksghs85hqwgfbk7m5b2pw2a1";
   };
 
   plugin = fetchurl {
-    url = "https://www.openprinting.org/download/printdriver/auxfiles/HP/plugins/${name}-plugin.run";
-    sha256 = "1b5gys04kh41gg7r7rzlpdbc2f4jirl2ik22cd935mm85k7abfwq";
+    url = "https://developers.hp.com/sites/default/files/${name}-plugin.run";
+    sha256 = "13xyv30jqjysfk7gh0gyn7qj0pb0qvk2rlbhm85a3lw7bjycal8g";
   };
 
   hplipState = substituteAll {
@@ -34,19 +34,20 @@ let
     x86_64-linux = "x86_64";
     armv6l-linux = "arm32";
     armv7l-linux = "arm32";
+    aarch64-linux = "aarch64";
   };
 
   hplipArch = hplipPlatforms.${stdenv.hostPlatform.system}
     or (throw "HPLIP not supported on ${stdenv.hostPlatform.system}");
 
-  pluginArches = [ "x86_32" "x86_64" "arm32" ];
+  pluginArches = [ "x86_32" "x86_64" "arm32" "aarch64" ];
 
 in
 
 assert withPlugin -> builtins.elem hplipArch pluginArches
   || throw "HPLIP plugin not supported on ${stdenv.hostPlatform.system}";
 
-pythonPackages.buildPythonApplication {
+python3Packages.buildPythonApplication {
   inherit name src;
   format = "other";
 
@@ -58,17 +59,15 @@ pythonPackages.buildPythonApplication {
     dbus
     file
     ghostscript
-    net_snmp
+    net-snmp
     openssl
     perl
     zlib
   ];
 
-  nativeBuildInputs = [
-    pkgconfig
-  ];
+  nativeBuildInputs = [ pkgconfig ];
 
-  pythonPath = with pythonPackages; [
+  pythonPath = with python3Packages; [
     dbus
     pydbus
     dbus-python
@@ -77,6 +76,7 @@ pythonPackages.buildPythonApplication {
     reportlab
     usbutils
     sip
+    dbus-python
   ] ++ stdenv.lib.optionals withQt5 [
     pyqt5
     enum-compat
@@ -227,7 +227,7 @@ pythonPackages.buildPythonApplication {
     license = if withPlugin
       then licenses.unfree
       else with licenses; [ mit bsd2 gpl2Plus ];
-    platforms = [ "i686-linux" "x86_64-linux" "armv6l-linux" "armv7l-linux" ];
+    platforms = [ "i686-linux" "x86_64-linux" "armv6l-linux" "armv7l-linux" "aarch64-linux" ];
     maintainers = with maintainers; [ ttuegel ];
   };
 }

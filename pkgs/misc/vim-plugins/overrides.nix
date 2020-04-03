@@ -1,6 +1,6 @@
 { lib, stdenv
 , python, cmake, meson, vim, ruby
-, which, fetchFromGitHub, fetchgit, fetchurl, fetchzip
+, which, fetchFromGitHub, fetchgit, fetchurl, fetchzip, fetchpatch
 , llvmPackages, rustPlatform
 , xkb-switch, fzf, skim, stylish-haskell
 , python3, boost, icu, ncurses
@@ -10,15 +10,22 @@
 , languagetool
 , Cocoa, CoreFoundation, CoreServices
 , buildVimPluginFrom2Nix
+, nodePackages
 
 # coc-go dependency
 , go
 
-# vim-go denpencies
+# deoplete-khard dependency
+, khard
+
+# vim-go dependencies
 , asmfmt, delve, errcheck, godef, golint
 , gomodifytags, gotags, gotools, go-motion
 , gnused, reftools, gogetdoc, gometalinter
 , impl, iferr, gocode, gocode-gomod, go-tools
+
+# direnv-vim dependencies
+, direnv
 
 # vCoolor dependency
 , gnome3
@@ -49,16 +56,16 @@ self: super: {
   };
 
   LanguageClient-neovim = let
-    version = "0.1.154";
+    version = "0.1.156";
     LanguageClient-neovim-src = fetchurl {
       url = "https://github.com/autozimu/LanguageClient-neovim/archive/${version}.tar.gz";
-      sha256 = "03sp643nihj9p2s9cx2dcazhz68s30qx7igqprgsmr1040rhg2py";
+      sha256 = "0bf2va6lpgw7wqpwpfidijbzphhvw48hyc2b529qv12vwgnd1shq";
     };
     LanguageClient-neovim-bin = rustPlatform.buildRustPackage {
       name = "LanguageClient-neovim-bin";
       src = LanguageClient-neovim-src;
 
-      cargoSha256 = "1bvbls2l1xa0s3k11crvd98il4i20z5sn0hqmsc1b915k03qq4zj";
+      cargoSha256 = "0w66fcrlaxf6zgkrfpgfybfbm759fzimnr3pjq6sm14frar7lhr6";
       buildInputs = stdenv.lib.optionals stdenv.isDarwin [ CoreServices ];
 
       # FIXME: Use impure version of CoreFoundation because of missing symbols.
@@ -80,17 +87,6 @@ self: super: {
     '';
   };
 
-  # do not auto-update this one, as the name clashes with vim-snippets
-  vim-docbk-snippets = buildVimPluginFrom2Nix {
-    pname = "vim-docbk-snippets";
-    version = "2017-11-02";
-    src = fetchgit {
-      url = "https://github.com/jhradilek/vim-snippets";
-      rev = "69cce66defdf131958f152ea7a7b26c21ca9d009";
-      sha256 = "1363b2fmv69axrl2hm74dmx51cqd8k7rk116890qllnapzw1zjgc";
-    };
-  };
-
   clang_complete = super.clang_complete.overrideAttrs(old: {
     # In addition to the arguments you pass to your compiler, you also need to
     # specify the path of the C++ std header (if you are using C++).
@@ -108,6 +104,14 @@ self: super: {
     '';
   });
 
+  direnv-vim = super.direnv-vim.overrideAttrs(oa: {
+    preFixup = oa.preFixup or "" + ''
+      substituteInPlace $out/share/vim-plugins/direnv-vim/autoload/direnv.vim \
+        --replace "let s:direnv_cmd = get(g:, 'direnv_cmd', 'direnv')" \
+          "let s:direnv_cmd = get(g:, 'direnv_cmd', '${lib.getBin direnv}/bin/direnv')"
+    '';
+  });
+
   clighter8 = super.clighter8.overrideAttrs(old: {
     preFixup = ''
       sed "/^let g:clighter8_libclang_path/s|')$|${llvmPackages.clang.cc.lib}/lib/libclang.so')|" \
@@ -122,16 +126,197 @@ self: super: {
     '';
   });
 
+  coc-css = buildVimPluginFrom2Nix {
+    pname = "coc-css";
+    version = nodePackages.coc-css.version;
+    src = "${nodePackages.coc-css}/lib/node_modules/coc-css";
+  };
+
+  coc-emmet = buildVimPluginFrom2Nix {
+    pname = "coc-emmet";
+    version = nodePackages.coc-emmet.version;
+    src = "${nodePackages.coc-emmet}/lib/node_modules/coc-emmet";
+  };
+
+  coc-eslint = buildVimPluginFrom2Nix {
+    pname = "coc-eslint";
+    version = nodePackages.coc-eslint.version;
+    src = "${nodePackages.coc-eslint}/lib/node_modules/coc-eslint";
+  };
+
+  coc-git = buildVimPluginFrom2Nix {
+    pname = "coc-git";
+    version = nodePackages.coc-git.version;
+    src = "${nodePackages.coc-git}/lib/node_modules/coc-git";
+  };
+
+  coc-highlight = buildVimPluginFrom2Nix {
+    pname = "coc-highlight";
+    version = nodePackages.coc-highlight.version;
+    src = "${nodePackages.coc-highlight}/lib/node_modules/coc-highlight";
+  };
+
+  coc-html = buildVimPluginFrom2Nix {
+    pname = "coc-html";
+    version = nodePackages.coc-html.version;
+    src = "${nodePackages.coc-html}/lib/node_modules/coc-html";
+  };
+
+  coc-imselect = buildVimPluginFrom2Nix {
+    pname = "coc-imselect";
+    version = nodePackages.coc-imselect.version;
+    src = "${nodePackages.coc-imselect}/lib/node_modules/coc-imselect";
+  };
+
+  coc-java = buildVimPluginFrom2Nix {
+    pname = "coc-java";
+    version = nodePackages.coc-java.version;
+    src = "${nodePackages.coc-java}/lib/node_modules/coc-java";
+  };
+
+  coc-jest = buildVimPluginFrom2Nix {
+    pname = "coc-jest";
+    version = nodePackages.coc-jest.version;
+    src = "${nodePackages.coc-jest}/lib/node_modules/coc-jest";
+  };
+
+  coc-json = buildVimPluginFrom2Nix {
+    pname = "coc-json";
+    version = nodePackages.coc-json.version;
+    src = "${nodePackages.coc-json}/lib/node_modules/coc-json";
+  };
+
+  coc-lists = buildVimPluginFrom2Nix {
+    pname = "coc-lists";
+    version = nodePackages.coc-lists.version;
+    src = "${nodePackages.coc-lists}/lib/node_modules/coc-lists";
+  };
+
+  coc-metals = buildVimPluginFrom2Nix {
+    pname = "coc-metals";
+    version = nodePackages.coc-metals.version;
+    src = "${nodePackages.coc-metals}/lib/node_modules/coc-metals";
+  };
+
   # Only official releases contains the required index.js file
+  # NB: Make sure you pick a rev from the release branch!
   coc-nvim = buildVimPluginFrom2Nix rec {
     pname = "coc-nvim";
-    version = "0.0.74";
+    version = "2020-01-05";
     src = fetchFromGitHub {
       owner = "neoclide";
       repo = "coc.nvim";
-      rev = "v${version}";
-      sha256 = "1s4nib2mnhagd0ymx254vf7l1iijwrh2xdqn3bdm4f1jnip81r10";
+      rev = "984779f2f825626aa9d441746d8b4ee079137c65";
+      sha256 = "0w7qnhi7wikr789h3w5p59l8wd81czpvbzbdanf8klf9ap4ma3yg";
     };
+  };
+
+  coc-pairs = buildVimPluginFrom2Nix {
+    pname = "coc-pairs";
+    version = nodePackages.coc-pairs.version;
+    src = "${nodePackages.coc-pairs}/lib/node_modules/coc-pairs";
+  };
+
+  coc-prettier = buildVimPluginFrom2Nix {
+    pname = "coc-prettier";
+    version = nodePackages.coc-prettier.version;
+    src = "${nodePackages.coc-prettier}/lib/node_modules/coc-prettier";
+  };
+
+  coc-python = buildVimPluginFrom2Nix {
+    pname = "coc-python";
+    version = nodePackages.coc-python.version;
+    src = "${nodePackages.coc-python}/lib/node_modules/coc-python";
+  };
+
+  coc-r-lsp = buildVimPluginFrom2Nix {
+    pname = "coc-r-lsp";
+    version = nodePackages.coc-r-lsp.version;
+    src = "${nodePackages.coc-r-lsp}/lib/node_modules/coc-r-lsp";
+  };
+
+  coc-rls = buildVimPluginFrom2Nix {
+    pname = "coc-rls";
+    version = nodePackages.coc-rls.version;
+    src = "${nodePackages.coc-rls}/lib/node_modules/coc-rls";
+  };
+
+  coc-smartf = buildVimPluginFrom2Nix {
+    pname = "coc-smartf";
+    version = nodePackages.coc-smartf.version;
+    src = "${nodePackages.coc-smartf}/lib/node_modules/coc-smartf";
+  };
+
+  coc-snippets = buildVimPluginFrom2Nix {
+    pname = "coc-snippets";
+    version = nodePackages.coc-snippets.version;
+    src = "${nodePackages.coc-snippets}/lib/node_modules/coc-snippets";
+  };
+
+  coc-solargraph = buildVimPluginFrom2Nix {
+    pname = "coc-solargraph";
+    version = nodePackages.coc-solargraph.version;
+    src = "${nodePackages.coc-solargraph}/lib/node_modules/coc-solargraph";
+  };
+
+  coc-stylelint = buildVimPluginFrom2Nix {
+    pname = "coc-stylelint";
+    version = nodePackages.coc-stylelint.version;
+    src = "${nodePackages.coc-stylelint}/lib/node_modules/coc-stylelint";
+  };
+
+  coc-tabnine = buildVimPluginFrom2Nix {
+    pname = "coc-tabnine";
+    version = nodePackages.coc-tabnine.version;
+    src = "${nodePackages.coc-tabnine}/lib/node_modules/coc-tabnine";
+  };
+
+  coc-tslint = buildVimPluginFrom2Nix {
+    pname = "coc-tslint";
+    version = nodePackages.coc-tslint.version;
+    src = "${nodePackages.coc-tslint}/lib/node_modules/coc-tslint";
+  };
+
+  coc-tslint-plugin = buildVimPluginFrom2Nix {
+    pname = "coc-tslint-plugin";
+    version = nodePackages.coc-tslint-plugin.version;
+    src = "${nodePackages.coc-tslint-plugin}/lib/node_modules/coc-tslint-plugin";
+  };
+
+  coc-tsserver = buildVimPluginFrom2Nix {
+    pname = "coc-tsserver";
+    version = nodePackages.coc-tsserver.version;
+    src = "${nodePackages.coc-tsserver}/lib/node_modules/coc-tsserver";
+  };
+
+  coc-vetur = buildVimPluginFrom2Nix {
+    pname = "coc-vetur";
+    version = nodePackages.coc-vetur.version;
+    src = "${nodePackages.coc-vetur}/lib/node_modules/coc-vetur";
+  };
+
+  coc-vimtex = buildVimPluginFrom2Nix {
+    pname = "coc-vimtex";
+    version = nodePackages.coc-vimtex.version;
+    src = "${nodePackages.coc-vimtex}/lib/node_modules/coc-vimtex";
+  };
+
+  coc-wxml = buildVimPluginFrom2Nix {
+    pname = "coc-wxml";
+    version = nodePackages.coc-wxml.version;
+    src = "${nodePackages.coc-wxml}/lib/node_modules/coc-wxml";
+  };
+
+  coc-yaml = buildVimPluginFrom2Nix {
+    pname = "coc-yaml";
+    version = nodePackages.coc-yaml.version;
+    src = "${nodePackages.coc-yaml}/lib/node_modules/coc-yaml";
+  };
+
+  coc-yank = buildVimPluginFrom2Nix {
+    pname = "coc-yank";
+    version = nodePackages.coc-yank.version;
+    src = "${nodePackages.coc-yank}/lib/node_modules/coc-yank";
   };
 
   command-t = super.command-t.overrideAttrs(old: {
@@ -184,6 +369,17 @@ self: super: {
    '';
   });
 
+  deoplete-khard = super.deoplete-khard.overrideAttrs(old: {
+    dependencies = [ self.deoplete-nvim ];
+    passthru.python3Dependencies = ps: [ (ps.toPythonModule khard) ];
+    meta = {
+      description = "Address-completion for khard via deoplete";
+      homepage = "https://github.com/nicoe/deoplete-khard";
+      license = stdenv.lib.licenses.mit;
+      maintainers = with stdenv.lib.maintainers; [ jorsn ];
+    };
+  });
+
   ensime-vim = super.ensime-vim.overrideAttrs(old: {
     passthru.python3Dependencies = ps: with ps; [ sexpdata websocket_client ];
     dependencies = with super; [ vimproc-vim vimshell-vim super.self forms ];
@@ -197,21 +393,9 @@ self: super: {
     configurePhase = "cd plugins/nvim";
   });
 
-  gist-vim = super.gist-vim.overrideAttrs(old: {
+  vim-gist = super.vim-gist.overrideAttrs(old: {
     dependencies = with super; [ webapi-vim ];
   });
-
-  gruvbox-community = buildVimPluginFrom2Nix {
-    pname = "gruvbox-community";
-    version = "2019-05-31";
-    src = fetchFromGitHub {
-      owner = "gruvbox-community";
-      repo = "gruvbox";
-      rev = "e122091dad968a5524f3e8136615a479c7b6f247";
-      sha256 = "1hncjyfi1gbw62b2pngy5qxyzibrhbyzgfmm9a58sdh1272l8ls8";
-    };
-    meta.maintainers = with stdenv.lib.maintainers; [ minijackson ];
-  };
 
   meson = buildVimPluginFrom2Nix {
     inherit (meson) pname version src;
@@ -264,6 +448,21 @@ self: super: {
       };
     });
 
+  vimacs = super.vimacs.overrideAttrs(old: {
+    buildPhase = ''
+      substituteInPlace bin/vim \
+        --replace '/usr/bin/vim' 'vim' \
+        --replace '/usr/bin/gvim' 'gvim'
+      # remove unnecessary duplicated bin wrapper script
+      rm -r plugin/vimacs
+    '';
+    meta = with stdenv.lib; {
+      description = "Vim-Improved eMACS: Emacs emulation plugin for Vim";
+      homepage = "http://algorithm.com.au/code/vimacs";
+      license = licenses.gpl2Plus;
+      maintainers = with stdenv.lib.maintainers; [ millerjason ];
+    };
+  });
 
   vimshell-vim = super.vimshell-vim.overrideAttrs(old: {
     dependencies = with super; [ vimproc-vim ];
@@ -333,6 +532,12 @@ self: super: {
 
   vim-easytags = super.vim-easytags.overrideAttrs(old: {
     dependencies = with super; [ vim-misc ];
+    patches = [
+      (fetchpatch { # https://github.com/xolox/vim-easytags/pull/170 fix version detection for universal-ctags
+        url = https://github.com/xolox/vim-easytags/commit/46e4709500ba3b8e6cf3e90aeb95736b19e49be9.patch;
+        sha256 = "0x0xabb56xkgdqrg1mpvhbi3yw4d829n73lsnnyj5yrxjffy4ax4";
+      })
+    ];
   });
 
   # change the go_bin_path to point to a path in the nix store. See the code in
@@ -390,6 +595,10 @@ self: super: {
     '';
   });
 
+  vim-metamath = super.vim-metamath.overrideAttrs(old: {
+    preInstall = "cd vim";
+  });
+
   vim-snipmate = super.vim-snipmate.overrideAttrs(old: {
     dependencies = with super; [ vim-addon-mw-utils tlib_vim ];
   });
@@ -434,11 +643,11 @@ self: super: {
     sourceRoot = ".";
   });
 
-  youcompleteme = super.youcompleteme.overrideAttrs(old: {
+  YouCompleteMe = super.YouCompleteMe.overrideAttrs(old: {
     buildPhase = ''
       substituteInPlace plugin/youcompleteme.vim \
-        --replace "'ycm_python_interpreter_path', '''" \
-        "'ycm_python_interpreter_path', '${python3}/bin/python'"
+        --replace "'ycm_path_to_python_interpreter', '''" \
+        "'ycm_path_to_python_interpreter', '${python3}/bin/python3'"
 
       rm -r third_party/ycmd
       ln -s ${ycmd}/lib/ycmd third_party
@@ -460,6 +669,10 @@ self: super: {
       description = "code-completion for python using python-jedi";
       license = stdenv.lib.licenses.mit;
     };
+  });
+
+  lf-vim = super.lf-vim.overrideAttrs(old: {
+    dependencies = with super; [ bclose-vim ];
   });
 
   vim-stylish-haskell = super.vim-stylish-haskell.overrideAttrs (old: {

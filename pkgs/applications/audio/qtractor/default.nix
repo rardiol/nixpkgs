@@ -5,11 +5,11 @@
 
 stdenv.mkDerivation rec {
   pname = "qtractor";
-  version = "0.9.10";
+  version = "0.9.12";
 
   src = fetchurl {
     url = "mirror://sourceforge/${pname}/${pname}-${version}.tar.gz";
-    sha256 = "00fj762qdna4bm8hshdhkwfa48s01bi5sk4f030rfk77mivl09jk";
+    sha256 = "06493sf4hr178jkvric3rmc2phh1ph2jlyh8kl9z248amq3zfnhy";
   };
 
   nativeBuildInputs = [
@@ -22,6 +22,8 @@ stdenv.mkDerivation rec {
       libvorbis lilv lv2 qtbase rubberband serd sord sratom
       suil
     ];
+
+  enableParallelBuilding = true;
 
   meta = with stdenv.lib; {
     description = "Audio/MIDI multi-track sequencer";

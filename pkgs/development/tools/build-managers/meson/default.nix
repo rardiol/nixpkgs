@@ -1,22 +1,29 @@
-{ lib, python3Packages, stdenv, writeTextDir, substituteAll, targetPackages }:
+{ lib
+, python3Packages
+, stdenv
+, writeTextDir
+, substituteAll
+, targetPackages
+}:
 
 let
   # See https://mesonbuild.com/Reference-tables.html#cpu-families
   cpuFamilies = {
-    aarch64 = "aarch64";
-    armv6l  = "arm";
-    armv7l  = "arm";
-    i686    = "x86";
-    x86_64  = "x86_64";
+    aarch64  = "aarch64";
+    armv5tel = "arm";
+    armv6l   = "arm";
+    armv7l   = "arm";
+    i686     = "x86";
+    x86_64   = "x86_64";
   };
 in
 python3Packages.buildPythonApplication rec {
   pname = "meson";
-  version = "0.51.2";
+  version = "0.53.2";
 
   src = python3Packages.fetchPypi {
     inherit pname version;
-    sha256 = "0cqhkjbab1mbvxmbjvyfrbjfkm7bh436svqpjapca36c2k9h1vwr";
+    sha256 = "Po+DDzMYQ5fC6wtlHsUCrbY97LKJeL3ISzVY1xKEwh8=";
   };
 
   postFixup = ''
@@ -54,14 +61,6 @@ python3Packages.buildPythonApplication rec {
       src = ./fix-rpath.patch;
       inherit (builtins) storeDir;
     })
-  ] ++ lib.optionals stdenv.isDarwin [
-    # We use custom Clang, which makes Meson think *not Apple*, while still
-    # relying on system linker. When it detects standard Clang, Meson will
-    # pass it `-Wl,-O1` flag but optimizations are not recognized by
-    # Mac linker.
-    # https://github.com/mesonbuild/meson/issues/4784
-    # Should be fixed in 0.52
-    ./fix-objc-linking.patch
   ];
 
   setupHook = ./setup-hook.sh;
@@ -96,10 +95,10 @@ python3Packages.buildPythonApplication rec {
   isCross = stdenv.targetPlatform != stdenv.hostPlatform;
 
   meta = with lib; {
-    homepage = http://mesonbuild.com;
+    homepage = https://mesonbuild.com;
     description = "SCons-like build system that use python as a front-end language and Ninja as a building backend";
     license = licenses.asl20;
-    maintainers = with maintainers; [ mbe rasendubi ];
+    maintainers = with maintainers; [ jtojnar mbe rasendubi ];
     platforms = platforms.all;
   };
 }

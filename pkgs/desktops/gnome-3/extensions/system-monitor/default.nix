@@ -1,4 +1,4 @@
-{ stdenv, substituteAll, fetchFromGitHub, glib, glib-networking, libgtop, gnome3 }:
+{ stdenv, substituteAll, fetchFromGitHub, glib, glib-networking, libgtop }:
 
 stdenv.mkDerivation rec {
   pname = "gnome-shell-system-monitor";
@@ -39,8 +39,7 @@ stdenv.mkDerivation rec {
   meta = with stdenv.lib; {
     description = "Display system informations in gnome shell status bar";
     license = licenses.gpl3Plus;
-    maintainers = with maintainers; [ aneeshusa tiramiseb ];
+    maintainers = with maintainers; [ tiramiseb ];
     homepage = https://github.com/paradoxxxzero/gnome-shell-system-monitor-applet;
-    broken = versionAtLeast gnome3.gnome-shell.version "3.32";
   };
 }

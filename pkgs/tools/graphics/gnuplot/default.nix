@@ -11,19 +11,20 @@
 , fontconfig ? null
 , gnused ? null
 , coreutils ? null
-, withQt ? false, qttools, qtbase, qtsvg
+, withQt ? false, mkDerivation, qttools, qtbase, qtsvg
 }:
 
 assert libX11 != null -> (fontconfig != null && gnused != null && coreutils != null);
 let
   withX = libX11 != null && !aquaterm && !stdenv.isDarwin;
 in
-stdenv.mkDerivation rec {
-  name = "gnuplot-5.2.7";
+(if withQt then mkDerivation else stdenv.mkDerivation) rec {
+  pname = "gnuplot";
+  version = "5.2.8";
 
   src = fetchurl {
-    url = "mirror://sourceforge/gnuplot/${name}.tar.gz";
-    sha256 = "1vglp4la40f5dpj0zdj63zprrkyjgzy068p35bz5dqxjyczm1zlp";
+    url = "mirror://sourceforge/gnuplot/${pname}-${version}.tar.gz";
+    sha256 = "0dxc52d17mpyb2xm24da1nvhlacryv0irwa0q5l1cjj0rx67d9k0";
   };
 
   nativeBuildInputs = [ makeWrapper pkgconfig texinfo ] ++ lib.optional withQt qttools;
@@ -47,12 +48,16 @@ stdenv.mkDerivation rec {
     (if aquaterm then "--with-aquaterm" else "--without-aquaterm")
   ];
 
+  CXXFLAGS = lib.optionalString (stdenv.isDarwin && withQt) "-std=c++11";
+
   postInstall = lib.optionalString withX ''
     wrapProgram $out/bin/gnuplot \
        --prefix PATH : '${gnused}/bin' \
        --prefix PATH : '${coreutils}/bin' \
        --prefix PATH : '${fontconfig.bin}/bin' \
        --run '. ${./set-gdfontpath-from-fontconfig.sh}'
+  '' + lib.optionalString (stdenv.isDarwin && withQt) ''
+     wrapQtApp $out/bin/gnuplot
   '';
 
   enableParallelBuilding = true;

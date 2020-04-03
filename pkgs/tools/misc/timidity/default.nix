@@ -8,12 +8,14 @@ stdenv.mkDerivation {
     sha256 = "1xf8n6dqzvi6nr2asags12ijbj1lwk1hgl3s27vm2szib8ww07qn";
   };
 
+  patches = [ ./timidity-iA-Oj.patch ];
+
   nativeBuildInputs = [ pkgconfig ];
   buildInputs = [ alsaLib libjack2 ncurses ];
 
   configureFlags = [ "--enable-audio=oss,alsa,jack" "--enable-alsaseq" "--with-default-output=alsa" "--enable-ncurses" ];
 
-  NIX_LDFLAGS = ["-ljack -L${libjack2}/lib"];
+  NIX_LDFLAGS = "-ljack -L${libjack2}/lib";
 
   instruments = fetchurl {
     url = http://www.csee.umbc.edu/pub/midia/instruments.tar.gz;

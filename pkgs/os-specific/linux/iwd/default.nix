@@ -7,17 +7,18 @@
 , coreutils
 , docutils
 , readline
+, openssl
 , python3Packages
 }:
 
 stdenv.mkDerivation rec {
   pname = "iwd";
-  version = "0.22";
+  version = "1.6";
 
   src = fetchgit {
     url = https://git.kernel.org/pub/scm/network/wireless/iwd.git;
     rev = version;
-    sha256 = "0mjc08ayq2k7sinqanrlm97dn88dxkqkyk2vqqcx1nqjvwvbpbsp";
+    sha256 = "0c38c7a234cwdd5y1brq4w56xszs8zlp57rr3nvgp8z8djcy1qvx";
   };
 
   nativeBuildInputs = [
@@ -33,6 +34,8 @@ stdenv.mkDerivation rec {
     readline
   ];
 
+  checkInputs = [ openssl ];
+
   pythonPath = [
     python3Packages.dbus-python
     python3Packages.pygobject3
@@ -46,11 +49,14 @@ stdenv.mkDerivation rec {
     "--with-dbus-datadir=${placeholder "out"}/share/"
     "--with-systemd-modloaddir=${placeholder "out"}/etc/modules-load.d/" # maybe
     "--with-systemd-unitdir=${placeholder "out"}/lib/systemd/system/"
+    "--with-systemd-networkdir=${placeholder "out"}/lib/systemd/network/"
   ];
 
   postUnpack = ''
     patchShebangs .
   '';
+
+  doCheck = true;
 
   postInstall = ''
     cp -a test/* $out/bin/
@@ -77,6 +83,6 @@ stdenv.mkDerivation rec {
     description = "Wireless daemon for Linux";
     license = licenses.lgpl21;
     platforms = platforms.linux;
-    maintainers = with maintainers; [ dtzWill ];
+    maintainers = with maintainers; [ dtzWill fpletz ];
   };
 }

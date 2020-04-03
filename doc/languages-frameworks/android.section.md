@@ -95,7 +95,7 @@ $ nix-build
 
 The Android SDK gets deployed with all desired plugin versions.
 
-We can also deploy subsets of the Android SDK. For example, to only the the
+We can also deploy subsets of the Android SDK. For example, to only the
 `platform-tools` package, you can evaluate the following expression:
 
 ```nix
@@ -235,5 +235,5 @@ package manager uses. To update the expressions run the `generate.sh` script
 that is stored in the `pkgs/development/mobile/androidenv/` sub directory:
 
 ```bash
-sh ./generate.sh
+./generate.sh
 ```

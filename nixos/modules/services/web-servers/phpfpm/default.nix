@@ -31,7 +31,7 @@ let
     '';
     passAsFile = [ "nixDefaults" "phpOptions" ];
   } ''
-    cat $phpPackage/etc/php.ini $nixDefaultsPath $phpOptionsPath > $out
+    cat ${poolOpts.phpPackage}/etc/php.ini $nixDefaultsPath $phpOptionsPath > $out
   '';
 
   poolOpts = { name, ... }:
@@ -47,6 +47,7 @@ let
             Path to the unix socket file on which to accept FastCGI requests.
             <note><para>This option is read-only and managed by NixOS.</para></note>
           '';
+          example = "${runtimeDir}/<name>.sock";
         };
 
         listen = mkOption {
@@ -69,8 +70,6 @@ let
 
         phpOptions = mkOption {
           type = types.lines;
-          default = cfg.phpOptions;
-          defaultText = "config.services.phpfpm.phpOptions";
           description = ''
             "Options appended to the PHP configuration file <filename>php.ini</filename> used for this PHP-FPM pool."
           '';
@@ -137,6 +136,7 @@ let
       config = {
         socket = if poolOpts.listen == "" then "${runtimeDir}/${name}.sock" else poolOpts.listen;
         group = mkDefault poolOpts.user;
+        phpOptions = mkBefore cfg.phpOptions;
 
         settings = mapAttrs (name: mkDefault){
           listen = poolOpts.socket;
@@ -147,6 +147,10 @@ let
     };
 
 in {
+  imports = [
+    (mkRemovedOptionModule [ "services" "phpfpm" "poolConfigs" ] "Use services.phpfpm.pools instead.")
+    (mkRemovedOptionModule [ "services" "phpfpm" "phpIni" ] "")
+  ];
 
   options = {
     services.phpfpm = {
@@ -263,6 +267,7 @@ in {
         in {
           Slice = "phpfpm.slice";
           PrivateDevices = true;
+          PrivateTmp = true;
           ProtectSystem = "full";
           ProtectHome = true;
           # XXX: We need AF_NETLINK to make the sendmail SUID binary from postfix work

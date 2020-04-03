@@ -40,7 +40,9 @@ stdenv.mkDerivation {
         --replace /usr/bin/udevadm ${systemd}/bin/udevadm
     '';
 
-  enableParallelBuilding = true;
+  # https://github.com/NixOS/nixpkgs/pull/52597
+  # gcc: error: ../../device_mapper/libdevice-mapper.a: No such file or directory
+  enableParallelBuilding = false;
 
   patches = stdenv.lib.optionals stdenv.hostPlatform.isMusl [
     (fetchpatch {
@@ -63,7 +65,7 @@ stdenv.mkDerivation {
   doCheck = false; # requires root
 
   # To prevent make install from failing.
-  preInstall = "installFlags=\"OWNER= GROUP= confdir=$out/etc\"";
+  installFlags = [ "OWNER=" "GROUP=" "confdir=$(out)/etc" ];
 
   # Install systemd stuff.
   #installTargets = "install install_systemd_generators install_systemd_units install_tmpfiles_configuration";
