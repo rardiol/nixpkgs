@@ -70,6 +70,8 @@ pythonPackages.buildPythonApplication {
 
   pythonPath = with pythonPackages; [
     dbus
+    pydbus
+    dbus-python
     pillow
     pygobject2
     reportlab
