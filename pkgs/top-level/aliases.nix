@@ -152,6 +152,7 @@ mapAliases ({
   gettextWithExpat = gettext; # 2016-02-19
   git-hub = gitAndTools.git-hub; # added 2016-04-29
   glib_networking = glib-networking; # added 2018-02-25
+  gmailieer = lieer; # added 2020-04-19
   gnome-mpv = celluloid; # added 2019-08-22
   gnome15 = throw "gnome15 has been removed from nixpkgs, as it's unmaintained and depends on deprecated libraries."; # added 2019-12-10
   gmic_krita_qt = gmic-qt-krita; # added 2019-09-07
@@ -215,12 +216,14 @@ mapAliases ({
   keymon = throw "keymon has been removed from nixpkgs, as it's abandoned and archived."; # 2019-12-10
   kvm = qemu_kvm; # added 2018-04-25
   latinmodern-math = lmmath;
+  ldc2 = ldc; # added 2020-04-18
   letsencrypt = certbot; # added 2016-05-16
   libaudit = audit; # added 2018-04-25
   libcanberra_gtk2 = libcanberra-gtk2; # added 2018-02-25
   libcanberra_gtk3 = libcanberra-gtk3; # added 2018-02-25
   libcap_manpages = libcap.doc; # added 2016-04-29
   libcap_pam = if stdenv.isLinux then libcap.pam else null; # added 2016-04-29
+  libcroco = throw "libcroco has been removed as it's no longer used in any derivations."; # added 2020-03-04
   libindicate = throw "libindacate has been removed from nixpkgs, as it's abandoned and uses deprecated libraries"; # added 2019-12-10
   libindicate-gtk3 = throw "libindacate-gtk2 has been removed from nixpkgs, as it's abandoned and uses deprecated libraries"; # added 2019-12-10
   libindicate-gtk2 = throw "libindacate-gtk3 has been removed from nixpkgs, as it's abandoned and uses deprecated libraries"; # added 2019-12-10
@@ -236,18 +239,25 @@ mapAliases ({
   libGL_driver = mesa.drivers;
   libintlOrEmpty = stdenv.lib.optional (!stdenv.isLinux || stdenv.hostPlatform.libc != "glibc") gettext; # added 2018-03-14
   libjson_rpc_cpp = libjson-rpc-cpp; # added 2017-02-28
-  liblapackWithoutAtlas = liblapack; # added 2018-11-05
+  liblapackWithoutAtlas = lapack-reference; # added 2018-11-05
   liblrdf = lrdf; # added 2018-04-25
   libqrencode = qrencode;  # added 2019-01-01
   librdf = lrdf; # added 2020-03-22
   librecad2 = librecad;  # backwards compatibility alias, added 2015-10
   libsysfs = sysfsutils; # added 2018-04-25
   libtidy = html-tidy;  # added 2014-12-21
+  libtxc_dxtn = throw "removed 2020-03-16, now integrated in Mesa";
+  libtxc_dxtn_s2tc = throw "removed 2020-03-16, now integrated in Mesa";
   libudev = udev; # added 2018-04-25
   libsexy = throw "libsexy has been removed from nixpkgs, as it's abandoned and no package needed it."; # 2019-12-10
   links = links2; # added 2016-01-31
   linux_rpi0 = linux_rpi1;
   linuxPackages_rpi0 = linuxPackages_rpi1;
+
+  # added 2020-04-04
+  linuxPackages_testing_hardened = throw "linuxPackages_testing_hardened has been removed, please use linuxPackages_latest_hardened";
+  linux_testing_hardened = throw "linux_testing_hardened has been removed, please use linux_latest_hardened";
+
   loadcaffe = throw "loadcaffe has been removed, as the upstream project has been abandoned"; # added 2020-03-28
   lttngTools = lttng-tools;  # added 2014-07-31
   lttngUst = lttng-ust;  # added 2014-07-31
@@ -321,6 +331,55 @@ mapAliases ({
   perlArchiveCpio = perlPackages.ArchiveCpio; # added 2018-10-12
   pgp-tools = signing-party; # added 2017-03-26
   pg_tmp = ephemeralpg; # added 2018-01-16
+
+  php-embed = throw ''
+    php*-embed has been dropped, you can build the same package by using
+     something similar with this following snippet:
+    (php74.override { config.php.embed = true; config.php.apxs2 = false; })
+  ''; # added 2020-04-01
+  php72-embed = php-embed; # added 2020-04-01
+  php73-embed = php-embed; # added 2020-04-01
+  php74-embed = php-embed; # added 2020-04-01
+
+  phpPackages-embed = throw ''
+    php*Packages-embed has been dropped, you can build the same package by using
+     something similar with this following snippet:
+    (php74.override { config.php.embed = true; config.php.apxs2 = false; }).packages
+  ''; # added 2020-04-01
+  php74Packages-embed = phpPackages-embed;
+  php73Packages-embed = phpPackages-embed;
+  php72Packages-embed = phpPackages-embed;
+
+  php-unit = throw ''
+    php*-unit has been dropped, you can build the same package by using
+     something similar with this following snippet:
+    (php74.override {
+      config.php.embed = true;
+      config.php.apxs2 = false;
+      config.php.systemd = false;
+      config.php.phpdbg = false;
+      config.php.cgi = false;
+      config.php.fpm = false; })
+  ''; # added 2020-04-01
+  php72-unit = php-unit; # added 2020-04-01
+  php73-unit = php-unit; # added 2020-04-01
+  php74-unit = php-unit; # added 2020-04-01
+
+  phpPackages-unit = throw ''
+    php*Packages-unit has been dropped, you can build the same package by using
+     something similar with this following snippet:
+    (php74.override {
+      config.php.embed = true;
+      config.php.apxs2 = false;
+      config.php.systemd = false;
+      config.php.phpdbg = false;
+      config.php.cgi = false;
+      config.php.fpm = false; }).packages
+  ''; # added 2020-04-01
+  php74Packages-unit = phpPackages-unit;
+  php73Packages-unit = phpPackages-unit;
+  php72Packages-unit = phpPackages-unit;
+
   pidgin-with-plugins = pidgin; # added 2016-06
   pidginlatex = pidgin-latex; # added 2018-01-08
   pidginlatexSF = pidgin-latex; # added 2014-11-02
@@ -630,6 +689,11 @@ mapAliases ({
   clang_39 = llvm_4;
   clang_35 = llvm_4;
   clang_4 = llvm_4;
+
+  # added 2019-04-13
+  # *-polly pointed to llvmPackages_latest
+  llvm-polly = throw "clang is now built with polly-plugin by default";
+  clang-polly = throw "clang is now built with polly-plugin by default";
 
   /* Cleanup before 20.09 */
   oraclejdk8psu = throw ''
