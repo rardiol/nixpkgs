@@ -63,7 +63,7 @@ let
         extraEntriesBeforeNixOS extraPrepareConfig extraInitrd configurationLimit copyKernels
         default fsIdentifier efiSupport efiInstallAsRemovable gfxmodeEfi gfxmodeBios gfxpayloadEfi gfxpayloadBios;
       path = with pkgs; makeBinPath (
-        [ coreutils gnused gnugrep findutils diffutils btrfs-progs utillinux mdadm ]
+        [ coreutils gnused gnugrep findutils diffutils btrfs-progs utillinux mdadm dmraid ]
         ++ optional (cfg.efiSupport && (cfg.version == 2)) efibootmgr
         ++ optionals cfg.useOSProber [ busybox os-prober ]);
       font = if cfg.font == null then ""

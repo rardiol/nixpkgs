@@ -118,6 +118,8 @@ let
       copy_bin_and_libs ${pkgs.mdadm}/sbin/mdadm
       copy_bin_and_libs ${pkgs.mdadm}/sbin/mdmon
 
+      copy_bin_and_libs ${pkgs.dmraid}/sbin/dmraid
+
       # Copy udev.
       copy_bin_and_libs ${udev}/lib/systemd/systemd-udevd
       copy_bin_and_libs ${udev}/lib/systemd/systemd-sysctl
@@ -198,6 +200,7 @@ let
       $out/bin/dmsetup --version 2>&1 | tee -a log | grep -q "version:"
       LVM_SYSTEM_DIR=$out $out/bin/lvm version 2>&1 | tee -a log | grep -q "LVM"
       $out/bin/mdadm --version
+      $out/bin/dmraid --version
 
       ${config.boot.initrd.extraUtilsCommandsTest}
       fi
