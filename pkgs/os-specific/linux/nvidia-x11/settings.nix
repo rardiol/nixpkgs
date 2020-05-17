@@ -6,10 +6,8 @@ nvidia_x11: sha256:
 }:
 
 let
-  src = fetchFromGitHub {
-    owner = "NVIDIA";
-    repo = "nvidia-settings";
-    rev = nvidia_x11.version;
+  src = fetchurl {
+    url = "https://download.nvidia.com/XFree86/nvidia-settings/nvidia-settings-${nvidia_x11.version}.tar.bz2";
     inherit sha256;
   };
 
