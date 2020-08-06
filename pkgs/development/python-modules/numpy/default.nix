@@ -12,30 +12,36 @@
 , setuptoolsBuildHook
  }:
 
-assert (!blas.is64bit) && (!lapack.is64bit);
+assert (!blas.isILP64) && (!lapack.isILP64);
 
 let
   cfg = writeTextFile {
     name = "site.cfg";
     text = (lib.generators.toINI {} {
       ${blas.implementation} = {
-        include_dirs = "${blas}/include:${lapack}/include";
+        include_dirs = "${lib.getDev blas}/include:${lib.getDev lapack}/include";
         library_dirs = "${blas}/lib:${lapack}/lib";
-      } // lib.optionalAttrs (blas.implementation == "mkl") {
-        mkl_libs = "mkl_rt";
-        lapack_libs = "";
+        libraries = "lapack,lapacke,blas,cblas";
+      };
+      lapack = {
+        include_dirs = "${lib.getDev lapack}/include";
+        library_dirs = "${lapack}/lib";
+      };
+      blas = {
+        include_dirs = "${lib.getDev blas}/include";
+        library_dirs = "${blas}/lib";
       };
     });
   };
 in buildPythonPackage rec {
   pname = "numpy";
-  version = "1.18.1";
+  version = "1.19.0";
   format = "pyproject.toml";
 
   src = fetchPypi {
     inherit pname version;
     extension = "zip";
-    sha256 = "b6ff59cee96b454516e47e7721098e6ceebef435e3e21ac2d6c3b8b02628eb77";
+    sha256 = "76766cc80d6128750075378d3bb7812cf146415bd29b588616f72c943c00d598";
   };
 
   nativeBuildInputs = [ gfortran pytest cython setuptoolsBuildHook ];

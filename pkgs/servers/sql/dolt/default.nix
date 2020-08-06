@@ -2,18 +2,18 @@
 
 buildGoModule rec {
     pname = "dolt";
-    version = "0.15.2";
+    version = "0.18.1";
 
     src = fetchFromGitHub {
         owner = "liquidata-inc";
         repo = "dolt";
         rev = "v${version}";
-        sha256 = "0av21czfxpwy4y7n9x6hy6m2fliqcazjx7ww0rwm6kdwxipq1xsz";
+        sha256 = "106n4zlrs64vx09cm365jsymaa0949k0wjb845p2lp4794r9zkf7";
     };
 
     modRoot = "./go";
     subPackages = [ "cmd/dolt" "cmd/git-dolt" "cmd/git-dolt-smudge" ];
-    modSha256 = "0c120gkkswg0cqvvhjkxvalr4fsjv81khwg0x0fm8fr6lipkfksn";
+  vendorSha256 = "1pvf63cxwq4jj5gi2xalrsk2z1f7i53f0z6qc2p7aibwx9i1k9cz";
 
     meta = with lib; {
         description = "Relational database with version control and CLI a-la Git.";

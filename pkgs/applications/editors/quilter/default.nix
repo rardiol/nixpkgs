@@ -1,16 +1,16 @@
-{ stdenv, fetchFromGitHub, pkgconfig, meson, ninja, python3, vala
+{ stdenv, fetchFromGitHub, nix-update-script, pkgconfig, meson, ninja, python3, vala
 , gtk3, desktop-file-utils, gtksourceview, webkitgtk, gtkspell3, pantheon
 , libgee, discount, wrapGAppsHook }:
 
 stdenv.mkDerivation rec {
   pname = "quilter";
-  version = "2.2.2";
+  version = "2.2.4";
 
   src = fetchFromGitHub {
     owner = "lainsce";
     repo = pname;
     rev = version;
-    sha256 = "1bgsbcx09ca063kdqfc7nigly99d7xgx2cbkpk1nkhr0hvkyg9l9";
+    sha256 = "0xmnfqqdn7p84aksb8yzs14ikgy5driylr6m4p5ffsb6i9aa0i9h";
   };
 
   nativeBuildInputs = [
@@ -40,7 +40,7 @@ stdenv.mkDerivation rec {
   '';
 
   passthru = {
-    updateScript = pantheon.updateScript {
+    updateScript = nix-update-script {
       attrPath = pname;
     };
   };
