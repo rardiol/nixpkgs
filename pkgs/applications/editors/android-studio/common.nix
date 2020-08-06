@@ -39,6 +39,7 @@
 , nss
 , pciutils
 , pkgsi686Linux
+, ps
 , setxkbmap
 , stdenv
 , systemd
@@ -89,6 +90,7 @@ let
 
           # Runtime stuff
           git
+          ps
         ]}" \
         --prefix LD_LIBRARY_PATH : "${stdenv.lib.makeLibraryPath [
 
@@ -196,7 +198,12 @@ in runCommand
       # binaries are also distributed as proprietary software (unlike the
       # source-code itself).
       platforms = [ "x86_64-linux" ];
-      maintainers = with maintainers; [ primeos ];
+      maintainers = with maintainers; rec {
+        stable = [ meutraa ];
+        beta = [ galagora ];
+        canary = [ meutraa ];
+        dev = canary;
+      }."${channel}";
     };
   }
   ''

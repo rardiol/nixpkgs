@@ -13,10 +13,10 @@ buildPythonPackage rec {
   };
 
   meta = with stdenv.lib; {
-    description = "Python 3 module to inspect btrfs filesystems";
+    description = "Inspect btrfs filesystems";
     homepage = "https://github.com/knorrie/python-btrfs";
-    license = licenses.lgpl3;
-    platforms = platforms.all;
+    license = licenses.lgpl3Plus;
+    platforms = platforms.linux;
     maintainers = [ maintainers.evils ];
   };
 }

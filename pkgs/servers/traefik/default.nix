@@ -2,16 +2,16 @@
 
 buildGoModule rec {
   pname = "traefik";
-  version = "2.2.0";
+  version = "2.2.4";
 
   src = fetchFromGitHub {
     owner = "containous";
     repo = "traefik";
     rev = "v${version}";
-    sha256 = "1dcazssabqxr9wv3dds3z7ks3y628qa07vgnn3hpdwxzm2b2ma92";
+    sha256 = "1zxifwbrhxaj2pl6kwyk1ivr4in0wd0q01x9ynxzbf6w2yx4xkw2";
   };
 
-  modSha256 = "0w3ssxvsmq8i6hbfmn4ig2x13i2nlqy5q1khcblf9pq5vhk202qx";
+  vendorSha256 = "0kz7y64k07vlybzfjg6709fdy7krqlv1gkk01nvhs84sk8bnrcvn";
   subPackages = [ "cmd/traefik" ];
 
   nativeBuildInputs = [ go-bindata ];

@@ -30,11 +30,11 @@ let
 in
 mkDerivation rec {
   pname = "calibre";
-  version = "4.12.0";
+  version = "4.19.0";
 
   src = fetchurl {
     url = "https://download.calibre-ebook.com/${version}/${pname}-${version}.tar.xz";
-    sha256 = "144vl5p0adcywcqaarrriq5zd8q5i934yfjg9himiq1vdp9vy4fi";
+    sha256 = "1kpj65spwr9m88vshsljpdrw5jy7bbpqgqcrvqb17abh7fnnrb4x";
   };
 
   patches = [
@@ -47,7 +47,7 @@ mkDerivation rec {
   ] ++ lib.optional (!unrarSupport) ./dont_build_unrar_plugin.patch;
 
   prePatch = ''
-    sed -i "/pyqt_sip_dir/ s:=.*:= '${pypkgs.pyqt5_with_qtwebkit}/share/sip/PyQt5':"  \
+    sed -i "/pyqt_sip_dir/ s:=.*:= '${pypkgs.pyqt5}/share/sip/PyQt5':"  \
       setup/build_environment.py
 
     # Remove unneeded files and libs

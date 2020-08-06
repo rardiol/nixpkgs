@@ -6,7 +6,6 @@
 , gobject-introspection
 , gtk3
 , glib
-, gnome3
 , gst_all_1
 }:
 
@@ -53,7 +52,7 @@ python3.pkgs.buildPythonApplication rec {
     gst_all_1.gstreamer
     gst_all_1.gst-plugins-base
     (gst_all_1.gst-plugins-good.override { gtkSupport = true; })
-    gst_all_1.gst-plugins-bad # for zbar plug-in
+    (gst_all_1.gst-plugins-bad.override { enableZbar = true; }) # for zbar plug-in
   ];
 
   propagatedBuildInputs = with python3.pkgs; [
@@ -67,12 +66,6 @@ python3.pkgs.buildPythonApplication rec {
     requests
     twisted
   ];
-
-  passthru = {
-    updateScript = gnome3.updateScript {
-      packageName = pname;
-    };
-  };
 
   # https://github.com/NixOS/nixpkgs/issues/56943
   strictDeps = false;

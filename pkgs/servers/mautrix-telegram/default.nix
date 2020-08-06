@@ -1,21 +1,21 @@
-{ lib, python3, mautrix-telegram }:
+{ lib, python3, mautrix-telegram, fetchFromGitHub }:
 
 with python3.pkgs;
 
 buildPythonPackage rec {
   pname = "mautrix-telegram";
-  version = "0.7.2";
+  version = "0.8.2";
   disabled = pythonOlder "3.6";
 
-  src = fetchPypi {
-    inherit pname version;
-    sha256 = "1ahchkhrhyd160fwlg6g0d2v8v56j9f3h9rnm71nxibgfjcb6m3n";
+  src = fetchFromGitHub {
+    owner = "tulir";
+    repo = pname;
+    rev = "v${version}";
+    sha256 = "0mhy9b933haz1bldkglvn81warjxdjdzgkviiv5k6fykghq473jf";
   };
 
   postPatch = ''
-    sed -i -e '/alembic>/d' setup.py
-    substituteInPlace setup.py \
-      --replace "telethon>=1.9,<1.10" "telethon~=1.9"
+    sed -i -e '/alembic>/d' requirements.txt
   '';
 
   propagatedBuildInputs = [

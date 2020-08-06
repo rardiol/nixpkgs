@@ -1,15 +1,17 @@
-{ stdenv, fetchPypi, buildPythonPackage, pycodestyle, glibcLocales }:
+{ stdenv, fetchPypi, buildPythonPackage, pycodestyle, glibcLocales
+, toml
+}:
 
 buildPythonPackage rec {
   pname = "autopep8";
-  version = "1.5.1";
+  version = "1.5.3";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "1swr8ccm3mafcm3zpbwyn22kjs39lbqmg8w41sh7yb3gskgy2syc";
+    sha256 = "60fd8c4341bab59963dafd5d2a566e94f547e660b9b396f772afe67d8481dbf0";
   };
 
-  propagatedBuildInputs = [ pycodestyle ];
+  propagatedBuildInputs = [ pycodestyle toml ];
 
   # One test fails:
   # FAIL: test_recursive_should_not_crash_on_unicode_filename (test.test_autopep8.CommandLineTests)

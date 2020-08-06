@@ -1,14 +1,14 @@
-{ stdenv, fetchFromGitHub, nodejs, which, python27, utillinux }:
+{ stdenv, fetchFromGitHub, nodejs, which, python27, utillinux, nixosTests }:
 
-let version = "20.6"; in
-stdenv.mkDerivation {
-  name = "cjdns-"+version;
+stdenv.mkDerivation rec {
+  pname = "cjdns";
+  version = "20.7";
 
   src = fetchFromGitHub {
     owner = "cjdelisle";
     repo = "cjdns";
     rev = "cjdns-v${version}";
-    sha256 = "1d5rrnqb5dcmm5cg2ky1cgxz6ncb23n1j797j9zzw6xxdvkf3kgi";
+    sha256 = "09gpqpzc00pp3cj7lyq9876p7is4bcndpdi5knqbv824vk4bj3k0";
   };
 
   buildInputs = [ which python27 nodejs ] ++
@@ -28,6 +28,8 @@ stdenv.mkDerivation {
     mkdir -p $out/share/cjdns
     cp -R contrib tools node_build node_modules $out/share/cjdns/
   '';
+
+  passthru.tests.basic = nixosTests.cjdns;
 
   meta = with stdenv.lib; {
     homepage = "https://github.com/cjdelisle/cjdns";
