@@ -5,7 +5,7 @@
 
 stdenv.mkDerivation rec {
   pname = "widelands";
-  version = "20";
+  version = "21";
 
   meta = with stdenv.lib; {
     description = "RTS with multiple-goods economy";
@@ -26,15 +26,20 @@ stdenv.mkDerivation rec {
   ];
 
   src = fetchurl {
-    url = "https://launchpad.net/widelands/build${version}/build${version}/+download/widelands-build${version}.tar.bz2";
-    sha256 = "1cmwfwk7j6yi2pwmm4rm57s23sdzasqf53nx6567sdagqyc4sn9q";
+    url = "https://launchpad.net/widelands/build${version}/build${version}/+download/widelands-build${version}-source.tar.gz";
+    sha256 = "0mz3jily0w1zxxqbnkqrp6hl88xhrwzbil9crq7gpcwidx60w7k0";
   };
 
   preConfigure = ''
     cmakeFlags="
-      -DWL_INSTALL_BASEDIR=$out
-      -DWL_INSTALL_DATADIR=$out/share/widelands
+      -DWL_INSTALL_BASEDIR=$out/share/widelands
       -DWL_INSTALL_BINARY=$out/bin
+      -DWL_INSTALL_DATADIR=$out/share/widelands
+      -DWL_INSTALL_PREFIX=$out
+      -DUSE_XDG=ON
+      -DOPTION_USE_GLBINDING:BOOL=OFF
+      -DOPTION_ASAN=OFF
+      -DCMAKE_BUILD_TYPE=Release
     "
   '';
 
@@ -44,15 +49,6 @@ stdenv.mkDerivation rec {
     boost libpng zlib glew lua doxygen icu
     SDL2 SDL2_image SDL2_mixer SDL2_net SDL2_ttf
   ];
-
-  prePatch = ''
-    substituteInPlace ./debian/org.widelands.widelands.desktop --replace "/usr/share/games/widelands/data/" "$out/share/widelands/"
-  '';
-
-  postInstall = ''
-    mkdir -p "$out/share/applications/"
-    cp -v "../debian/org.widelands.widelands.desktop" "$out/share/applications/"
-  '';
 
   enableParallelBuilding = true;
 }
