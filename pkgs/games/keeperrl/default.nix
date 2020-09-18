@@ -62,8 +62,18 @@ stdenv.mkDerivation rec {
 
     cp -r data_free $out/share
     cp -r data_contrib $out/share
+    cp ${desktopItem}/share/applications/*.desktop $out/share/applications
     ${stdenv.lib.optionalString unfree_assets "cp -r data $out/share"}
   '';
+
+  desktopItem = makeDesktopItem {
+    name = "keeperrl";
+    desktopName = "KeeperRL";
+    comment = "Ambitious dungeon builder with roguelike elements";
+    type = "Application";
+    categories = "Game";
+    exec = "keeper";
+  };
 
   meta = with stdenv.lib; {
     description = "A dungeon management rogue-like";
