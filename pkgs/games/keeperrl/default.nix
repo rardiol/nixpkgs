@@ -5,13 +5,13 @@
 
 stdenv.mkDerivation rec {
   pname = "keeperrl";
-  version = "alpha28";
+  version = "alpha30";
 
   free-src = fetchFromGitHub {
     owner = "miki151";
     repo = "keeperrl";
     rev = version;
-    sha256 = "0isj8ijn5a89m2r5cxk4lcsq0cydx7c0h87vgr8v5cndm3rd27cy";
+    sha256 = "0l9gpcin2nn1k2l3fl3bky1zbg35wdway88x56pn5hf48b5i98dp";
   };
 
   assets = if unfree_assets then requireFile rec {
@@ -53,6 +53,7 @@ stdenv.mkDerivation rec {
                 "RELEASE=true"
                 "DATA_DIR=$(out)/share"
                 "ENABLE_LOCAL_USER_DIR=true"
+                "STEAMWORKS="
               ];
 
   installPhase = ''
