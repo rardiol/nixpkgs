@@ -16100,6 +16100,8 @@ with pkgs;
 
   enet = callPackage ../development/libraries/enet { };
 
+  elfio = callPackage ../development/libraries/elfio { };
+
   entt = callPackage ../development/libraries/entt { };
 
   libepoxy = callPackage ../development/libraries/libepoxy {};
