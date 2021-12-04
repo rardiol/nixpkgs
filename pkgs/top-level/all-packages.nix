@@ -22288,6 +22288,8 @@ with pkgs;
     python3 = null; # Currently not using the python3 bindings
   };
 
+  libtree = callPackage ../os-specific/linux/libtree { };
+
   libnotify = callPackage ../development/libraries/libnotify { };
 
   libvolume_id = callPackage ../os-specific/linux/libvolume_id { };
