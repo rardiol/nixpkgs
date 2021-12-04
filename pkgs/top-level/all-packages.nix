@@ -19859,6 +19859,8 @@ with pkgs;
 
   termbox = callPackage ../development/libraries/termbox { };
 
+  termcolor = callPackage ../development/libraries/termcolor { };
+
   tevent = callPackage ../development/libraries/tevent { };
 
   tet = callPackage ../development/tools/misc/tet { };
