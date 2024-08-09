@@ -2,20 +2,23 @@
   lib,
   buildGoModule,
   fetchFromGitHub,
+  unstableGitUpdater,
 }:
 
 buildGoModule {
   pname = "nc4nix";
-  version = "0-unstable-2024-05-24";
+  version = "0-unstable-2024-08-01";
 
   src = fetchFromGitHub {
     owner = "helsinki-systems";
     repo = "nc4nix";
-    rev = "9d605367d0d952de9d022155e8df28e6793ff104";
-    hash = "sha256-QAtN4fcbsX0e6DIchOjxpHDDmIt7SGiN8riLplqXIYs=";
+    rev = "827bb7244a3529e71c9474fe1f74aed51a4b08d5";
+    hash = "sha256-ToT+VvdXiUMmy0dNJAeyMlzMx87QhZPIwzxPXm2fR7s=";
   };
 
   vendorHash = "sha256-qntRsv3KvAbV3lENjAHKkQOqh3uTo3gacfwase489tQ=";
+
+  passthru.updateScript = unstableGitUpdater { };
 
   meta = {
     description = "Packaging helper for Nextcloud apps";

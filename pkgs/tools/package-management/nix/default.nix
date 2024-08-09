@@ -179,27 +179,34 @@ in lib.makeExtensible (self: ({
   };
 
   nix_2_23 = common {
-    version = "2.23.2";
-    hash = "sha256-NH1G4GGHXU4pnQWI9X/gs7r97GO0i4tJFjoaIxl0FaQ=";
+    version = "2.23.3";
+    hash = "sha256-lAoLGVIhRFrfgv7wcyduEkyc83QKrtsfsq4of+WrBeg=";
     self_attribute_name = "nix_2_23";
-    patches = [
-     # fixes regression in nix-prefetch-url
-     # https://github.com/NixOS/nix/pull/11052
-     (fetchpatch {
-       url = "https://github.com/NixOS/nix/commit/73f3179954ef8db5c8774c79272dd1215fe6f5c2.patch";
-       sha256 = "sha256-d/rBOONZGxOFRUPltH7z0OSYRqKbS/ZwZl/DaIXygC0=";
-     })
-    ];
   };
+
+  nix_2_24 = (common {
+    version = "2.24.1";
+    hash = "sha256-3yFEvUDPB7GlCMI9I5VV+HXMVOT38h3lnw01nIXU2F4=";
+    self_attribute_name = "nix_2_24";
+  }).override (lib.optionalAttrs (stdenv.isDarwin && stdenv.isx86_64) {
+    # Fix the following error with the default x86_64-darwin SDK:
+    #
+    #     error: aligned allocation function of type 'void *(std::size_t, std::align_val_t)' is only available on macOS 10.13 or newer
+    #
+    # Despite the use of the 10.13 deployment target here, the aligned
+    # allocation function Clang uses with this setting actually works
+    # all the way back to 10.6.
+    stdenv = overrideSDK stdenv { darwinMinVersion = "10.13"; };
+  });
 
   git = (common rec {
     version = "2.24.0";
-    suffix = "pre20240709_${lib.substring 0 8 src.rev}";
+    suffix = "pre20240723_${lib.substring 0 8 src.rev}";
     src = fetchFromGitHub {
       owner = "NixOS";
       repo = "nix";
-      rev = "142e566adbce587a5ed97d1648a26352f0608ec5";
-      hash = "sha256-fYZGuB/4LOBoMSUNj/yRU1mWm9lhdTzXF0P+zmac0hw=";
+      rev = "fb450de20ec8df558f9f7f167d748acf7cabe151";
+      hash = "sha256-xjN65yaPGwmly+Fdo6lVHL67+0IG+Cnxv7hNgYgoTGk=";
     };
     self_attribute_name = "git";
   }).override (lib.optionalAttrs (stdenv.isDarwin && stdenv.isx86_64) {
@@ -213,7 +220,7 @@ in lib.makeExtensible (self: ({
     stdenv = overrideSDK stdenv { darwinMinVersion = "10.13"; };
   });
 
-  latest = self.nix_2_23;
+  latest = self.nix_2_24;
 
   # The minimum Nix version supported by Nixpkgs
   # Note that some functionality *might* have been backported into this Nix version,
