@@ -89,7 +89,6 @@ let
       cholmod-extra = linux;
       colmap = linux;
       ctranslate2 = linux;
-      deepin.image-editor = linux;
       ffmpeg-full = linux;
       gimp = linux;
       gpu-screen-recorder = linux;
@@ -159,6 +158,7 @@ let
         transformers = linux;
         ttstokenizer = linux;
         vidstab = linux;
+        vllm = linux;
       };
     }
     // (lib.genAttrs packageSets evalPackageSet);
