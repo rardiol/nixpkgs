@@ -6585,15 +6585,7 @@ with pkgs;
 
   bandit = with python3Packages; toPythonApplication bandit;
 
-  bazel = bazel_6;
-
-  bazel_6 = callPackage ../development/tools/build-managers/bazel/bazel_6 {
-    inherit (darwin) sigtool;
-    buildJdk = jdk11_headless;
-    runJdk = jdk11_headless;
-    stdenv = if stdenv.cc.isClang then llvmPackages_17.stdenv else stdenv;
-    bazel_self = bazel_6;
-  };
+  bazel = bazel_7;
 
   bazel_7 = callPackage ../development/tools/build-managers/bazel/bazel_7 {
     inherit (darwin) sigtool;
@@ -8638,6 +8630,7 @@ with pkgs;
   };
 
   nss_latest = callPackage ../development/libraries/nss/latest.nix { };
+  nss_3_114 = callPackage ../development/libraries/nss/3_114.nix { };
   nss_esr = callPackage ../development/libraries/nss/esr.nix { };
   nss = nss_esr;
   nssTools = nss.tools;
